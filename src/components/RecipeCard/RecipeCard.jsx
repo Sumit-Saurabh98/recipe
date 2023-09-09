@@ -1,5 +1,4 @@
 import React from "react";
-import {useNavigate} from "react-router-dom"
 import {
   Box,
   Card,
@@ -14,14 +13,13 @@ import {
 
 function RecipeCard({
   recipe,
-  key,
+  id,
   showButtons,
   handleAddToNow
 }) {
-    const navigate = useNavigate();
 
   return (
-    <Card maxW="sm" key={key}>
+    <Card maxW="sm" key={id}>
       <CardBody>
         <Image
         _hover={{cursor:"pointer"}}

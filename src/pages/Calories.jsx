@@ -4,19 +4,18 @@ import { Box, Button, Input, Spinner, Flex, useToast } from "@chakra-ui/react";
 import RecipeCard from "../components/RecipeCard/RecipeCard";
 import axios from "axios";
 
-function Homepage(props) {
+function Calories(props) {
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [minCalories, setMinCalories] = useState("");
+  const [maxCalories, setMaxCalories] = useState("");
 
   const API_KEY = process.env.REACT_APP_API_KEY
   const API_ID = process.env.REACT_APP_API_ID
 
-  const URL = `https://api.edamam.com/api/recipes/v2?type=public&q=${searchQuery}&&app_id=${API_ID}&app_key=${API_KEY}`;
-
-  useEffect(() => {
+   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUserId(storedUserId);
@@ -33,9 +32,10 @@ function Homepage(props) {
     });
   };
 
-  const handleSearchSubmit = async () => {
-    if (searchQuery) {
+  const handleSearchByCalories = async () => {
+    if (minCalories && maxCalories) {
       try {
+        const URL = `https://api.edamam.com/api/recipes/v2?type=public&calories=${minCalories}-${maxCalories}&app_id=${API_ID}&app_key=${API_KEY}`;
         const { data } = await axios.get(URL);
         setSearchResults(data.hits);
         setIsLoading(false);
@@ -50,20 +50,26 @@ function Homepage(props) {
       <div>
         <Box display="flex" justifyContent="center" marginTop="20px">
           <Input
-            type="text"
-            placeholder="Search movies..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            type="number"
+            placeholder="Min Calories"
+            value={minCalories}
+            onChange={(e) => setMinCalories(e.target.value)}
           />
-          <Button colorScheme="cyan" onClick={handleSearchSubmit}>
-            Search
+          <Input
+            type="number"
+            placeholder="Max Calories"
+            value={maxCalories}
+            onChange={(e) => setMaxCalories(e.target.value)}
+          />
+          <Button colorScheme="cyan" onClick={handleSearchByCalories}>
+            Search by Calories
           </Button>
         </Box>
       </div>
 
       <div className="mainContainer">
         {!isLoading ? (
-          searchQuery && searchResults.length > 0 ? (
+          searchResults.length > 0 ? (
             searchResults.map((result, id) => (
               <RecipeCard
                 id={id}
@@ -91,4 +97,4 @@ function Homepage(props) {
   );
 }
 
-export default Homepage;
+export default Calories;
